@@ -1,0 +1,52 @@
+[build-system]
+requires = ["poetry-core>=1.0.0", "poetry-dynamic-versioning>=1.0.0,<2.0.0"]
+build-backend = "poetry_dynamic_versioning.backend"
+
+[project]
+name = "l5r-dices"
+dynamic = [ "version" ]
+authors = [
+    { name="Grégoire Rolland" }
+]
+description = "L5R v4 D10 Dices"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "typer (>=0.15.1,<0.16.0)",
+    "quantumrandom (>=1.9.0)"
+]
+
+[project.urls]
+"Homepage" = "http://nowhere.com"
+
+[project.scripts]
+l5r-dice-roller = "l5r-dices.cli:app"
+
+[tool.poetry]
+version = "0.0.0"
+
+[tool.poetry.dependencies]
+python = ">=3.12,<4.0"
+
+[tool.poetry.group.test.dependencies]
+pytest = ">=8.3.4"
+
+[tool.poetry.requires-plugins]
+poetry-dynamic-versioning = { version = ">=1.0.0,<2.0.0", extras = ["plugin"] }
+
+[tool.poetry-dynamic-versioning]
+enable = true
+vcs = "git"
+bump = false
+pattern  = "^(?P<base>\\d+\\.\\d+\\.\\d+)(-?((?P<stage>[a-zA-Z]+)\\.?(?P<revision>\\d+)?))?"
+format-jinja = """
+    {%- if distance == 0 -%}
+        {{ serialize_pep440(base, stage, revision) }}
+    {%- else -%}
+        {{ serialize_pep440(bump_version(base), stage, revision, dev=distance, metadata=[commit, branch_escaped]) }}
+    {%- endif -%}
+"""
