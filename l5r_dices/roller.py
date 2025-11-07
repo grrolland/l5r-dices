@@ -2,6 +2,7 @@ import re
 import click
 import typer
 from random import randrange
+from rich import print
 from typing_extensions import Annotated
 
 
@@ -28,12 +29,12 @@ class DicesParser(click.ParamType):
 
 def roll(
   dices:  Annotated[L5RDices, typer.Argument(click_type=DicesParser())],
-  no_explode: Annotated[bool, typer.Option(help="non explode 10")] = False,
-  spec: Annotated[bool, typer.Option(help="reroll 1")] = False,
+  explode: Annotated[bool, typer.Option("--explode", "-x", help="explode 10")] = False,
+  spec: Annotated[bool, typer.Option("--spec", "-s", help="reroll 1")] = False,
 ):
     rolls = []
     for i in range(dices.roll):
-        rolls.append(roll_one_dice(not no_explode, spec))
+        rolls.append(roll_one_dice(explode, spec))
     ordered_rolls = sorted(rolls, key=lambda d: d['result'], reverse=True)
     result = 0
     for i in range(dices.keep):
@@ -56,5 +57,21 @@ def roll_one_dice(explode, spec):
 
 def print_result(rolls, result):
     for r in rolls:
-        print(f"roll : {r['result']} -- {r['details']}")
-    print(f"result: {result}")
+        fr = '{: >3}'.format(r['result'])
+        print(f":game_die: [bold green]{fr}[/bold green] -- {format_details(r['details'])}")
+    tr = '{: >3}'.format(result)
+    print(f":direct_hit: [bold red] {result}[/bold red]")
+
+def format_details(details):
+    s = '['
+    for idx, d in enumerate(details):
+        s += '{: >2}'.format(d)
+        if d == 10 and idx < len(details) - 1 :
+            s += ':boom:'
+        if d == 1 and idx < len(details) - 1 :
+            s += ':repeat:'
+        if idx < len(details) - 1 :
+            s += ', '
+    s += ']'
+    return s
+

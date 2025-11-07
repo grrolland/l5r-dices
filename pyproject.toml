@@ -24,7 +24,7 @@ dependencies = [
 "Homepage" = "http://nowhere.com"
 
 [project.scripts]
-l5r-dice-roller = "l5r-dices.cli:app"
+l5r-dice-roller = "l5r_dices.cli:app"
 
 [tool.poetry]
 version = "0.0.0"
